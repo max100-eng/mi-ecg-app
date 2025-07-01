@@ -1,0 +1,61 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+
+# Node.js artifacts
+node_modules/
+npm-debug.log
+yarn-debug.log
+
+# Development artifacts
+.idea/
+.vscode/
+*.swp
+*.swo
+dist/
+build/
+out/
+test/
+tests/
+debug/
+*.log
+
+# Version control
+.git/
+.gitignore
+.svn/
+.hg/
+
+# Environment and secrets
+.env*
+*.env
+*.pem
+*.key
+*.crt
+config.local.*
+*.local.yml
+
+# Documentation
+/docs/
+*.md
+README*
+
+# Docker files
+Dockerfile*
+docker-compose*
+
+# Temporary files and local development
+/tmp/
+/temp/
+*.tmp
+.local/
+local/
+
+# Project-specific: skip get-pip.py (used for bootstrapping), but ignore any other installer scripts
+# (No additional project-specific patterns detected)
+
+# Ignore files with no extension that are not needed (add as needed)
+# (No specific patterns for files with no extension detected)

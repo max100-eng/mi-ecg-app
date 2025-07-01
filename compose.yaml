@@ -1,0 +1,18 @@
+services:
+  python-ecg_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: python-ecg_app:latest
+    container_name: python-ecg_app
+    restart: unless-stopped
+    init: true
+    ports:
+      - "8501:8501"  # Streamlit default port
+    # env_file: ./.env  # Uncomment if .env file exists
+    # No external dependencies detected (e.g., database, cache)
+    # If you add a database, add it as a service and configure networking
+
+# No external services (databases, caches, etc.) detected in the project files or Dockerfile.
+# No volumes section included, as there are no persistent data requirements.
+# Only the Streamlit app is exposed on port 8501.
