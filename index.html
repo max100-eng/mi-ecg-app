@@ -261,4 +261,218 @@
                     <svg class="upload-icon" viewBox="0 0 24 24">
                         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                     </svg>
-                    <p>Arrastra y suelta tu
+                   Copilot said: Claro, aquí tienes la continuación del código
+Claro, aquí tienes la continuación del código HTML que falta en tu archivo, comenzando desde la línea donde quedó cortado (<p>Arrastra y suelta tu). Completo la sección de subida, cámara y URL, y cierro el resto del documento correctamente:
+
+HTML
+<p>Arrastra y suelta tu archivo aquí o haz clic para seleccionar.</p>
+</div>
+<input type="file" id="fileInput" accept="image/*,.pdf" style="display:none" />
+</div>
+<div class="file-info" id="fileInfo" style="display:none;"></div>
+<img id="previewImage" class="preview-image" style="display:none;" />
+<button id="analyzeBtn" disabled>Analizar ECG</button>
+<div class="error-message" id="uploadError" style="display:none;"></div>
+</div>
+
+<div id="cameraTab" class="tab-content">
+    <video id="cameraFeed" autoplay playsinline style="display: none;"></video>
+    <canvas id="cameraCanvas" style="display:none;"></canvas>
+    <div class="camera-controls">
+        <button id="startCameraBtn" class="camera-btn capture-btn">Iniciar cámara</button>
+        <button id="captureBtn" class="camera-btn capture-btn" style="display:none;">Capturar</button>
+        <button id="cancelCameraBtn" class="camera-btn cancel-btn" style="display:none;">Cancelar</button>
+    </div>
+    <img id="cameraPreview" class="preview-image" style="display:none;" />
+    <button id="analyzeCameraBtn" style="display:none;">Analizar ECG</button>
+    <div class="error-message" id="cameraError" style="display:none;"></div>
+</div>
+
+<div id="urlTab" class="tab-content">
+    <input type="text" id="urlInput" placeholder="Pega la URL de la imagen o PDF aquí" style="width:100%;padding:10px;margin-bottom:10px;" />
+    <button id="fetchUrlBtn">Cargar desde URL</button>
+    <img id="urlPreview" class="preview-image" style="display:none;" />
+    <button id="analyzeUrlBtn" style="display:none;">Analizar ECG</button>
+    <div class="error-message" id="urlError" style="display:none;"></div>
+</div>
+</div>
+
+<div id="resultsSection" class="results-section" style="display:none;">
+    <h2>Resultados del análisis</h2>
+    <div id="analysisResults"></div>
+    <button id="newAnalysisBtn">Realizar otro análisis</button>
+</div>
+
+<script>
+    // Tab switching
+    function switchTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        if (tab === 'upload') {
+            document.querySelector('.tab:nth-child(1)').classList.add('active');
+            document.getElementById('uploadTab').classList.add('active');
+        } else if (tab === 'camera') {
+            document.querySelector('.tab:nth-child(2)').classList.add('active');
+            document.getElementById('cameraTab').classList.add('active');
+        } else if (tab === 'url') {
+            document.querySelector('.tab:nth-child(3)').classList.add('active');
+            document.getElementById('urlTab').classList.add('active');
+        }
+    }
+
+    // File upload logic
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+    const previewImage = document.getElementById('previewImage');
+    const fileInfo = document.getElementById('fileInfo');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const uploadError = document.getElementById('uploadError');
+
+    dropArea.addEventListener('click', () => fileInput.click());
+
+    dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.classList.add('hover');
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+        dropArea.classList.remove('hover');
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('hover');
+        handleFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener('change', () => {
+        handleFile(fileInput.files[0]);
+    });
+
+    function handleFile(file) {
+        if (!file) return;
+        fileInfo.style.display = 'block';
+        fileInfo.textContent = `Archivo: ${file.name} (${Math.round(file.size/1024)} KB)`;
+        uploadError.style.display = 'none';
+        analyzeBtn.disabled = false;
+
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewImage.style.display = 'none';
+        }
+    }
+
+    // Camera logic
+    const startCameraBtn = document.getElementById('startCameraBtn');
+    const captureBtn = document.getElementById('captureBtn');
+    const cancelCameraBtn = document.getElementById('cancelCameraBtn');
+    const cameraFeed = document.getElementById('cameraFeed');
+    const cameraCanvas = document.getElementById('cameraCanvas');
+    const cameraPreview = document.getElementById('cameraPreview');
+    const analyzeCameraBtn = document.getElementById('analyzeCameraBtn');
+    const cameraError = document.getElementById('cameraError');
+    let stream = null;
+
+    startCameraBtn.addEventListener('click', async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            cameraFeed.srcObject = stream;
+            cameraFeed.style.display = 'block';
+            captureBtn.style.display = 'inline-block';
+            cancelCameraBtn.style.display = 'inline-block';
+            startCameraBtn.style.display = 'none';
+            cameraPreview.style.display = 'none';
+            cameraError.style.display = 'none';
+        } catch (err) {
+            cameraError.textContent = 'No se pudo acceder a la cámara.';
+            cameraError.style.display = 'block';
+        }
+    });
+
+    captureBtn.addEventListener('click', () => {
+        cameraCanvas.width = cameraFeed.videoWidth;
+        cameraCanvas.height = cameraFeed.videoHeight;
+        cameraCanvas.getContext('2d').drawImage(cameraFeed, 0, 0);
+        cameraPreview.src = cameraCanvas.toDataURL('image/png');
+        cameraPreview.style.display = 'block';
+        analyzeCameraBtn.style.display = 'block';
+        cameraFeed.style.display = 'none';
+        captureBtn.style.display = 'none';
+    });
+
+    cancelCameraBtn.addEventListener('click', () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        cameraFeed.style.display = 'none';
+        captureBtn.style.display = 'none';
+        cancelCameraBtn.style.display = 'none';
+        startCameraBtn.style.display = 'inline-block';
+        cameraPreview.style.display = 'none';
+        analyzeCameraBtn.style.display = 'none';
+        cameraError.style.display = 'none';
+    });
+
+    // URL logic
+    const urlInput = document.getElementById('urlInput');
+    const fetchUrlBtn = document.getElementById('fetchUrlBtn');
+    const urlPreview = document.getElementById('urlPreview');
+    const analyzeUrlBtn = document.getElementById('analyzeUrlBtn');
+    const urlError = document.getElementById('urlError');
+
+    fetchUrlBtn.addEventListener('click', () => {
+        const url = urlInput.value.trim();
+        if (!url) {
+            urlError.textContent = 'Por favor, introduce una URL válida.';
+            urlError.style.display = 'block';
+            return;
+        }
+        urlPreview.src = url;
+        urlPreview.style.display = 'block';
+        analyzeUrlBtn.style.display = 'block';
+        urlError.style.display = 'none';
+    });
+
+    // Prevent default form submit on Enter in URL input
+    urlInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            fetchUrlBtn.click();
+            e.preventDefault();
+        }
+    });
+
+    // Placeholder for analysis logic
+    analyzeBtn.addEventListener('click', showResults);
+    analyzeCameraBtn.addEventListener('click', showResults);
+    analyzeUrlBtn.addEventListener('click', showResults);
+
+    function showResults() {
+        document.querySelector('.upload-container').style.display = 'none';
+        document.getElementById('resultsSection').style.display = 'block';
+        document.getElementById('analysisResults').innerHTML = `
+            <p><strong>¡Análisis completado!</strong></p>
+            <ul>
+                <li>Frecuencia cardiaca: 72 lpm</li>
+                <li>Intervalo PR: 160 ms</li>
+                <li>Duración QRS: 90 ms</li>
+                <li>Conclusión: Sin hallazgos patológicos.</li>
+            </ul>
+            <p><em>Este resultado es solo de ejemplo.</em></p>
+        `;
+    }
+
+    document.getElementById('newAnalysisBtn').addEventListener('click', () => {
+        document.getElementById('resultsSection').style.display = 'none';
+        document.querySelector('.upload-container').style.display = 'block';
+    });
+</script>
+
+</body>
+</html>
