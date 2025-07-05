@@ -1,0 +1,8 @@
+streamlit
+numpy
+pandas
+scipy
+matplotlib
+tensorflow # u otras librerías de ML que uses
+pyedflib # si procesas archivos EDF
+flask # <--- ¡Añade esta línea!
