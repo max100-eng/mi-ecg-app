@@ -1,8 +1,8 @@
-streamlit
+flask==3.0.3
+wfdb
+neurokit2
 numpy
 pandas
 scipy
 matplotlib
-tensorflow # u otras librerías de ML que uses
-pyedflib # si procesas archivos EDF
-flask # <--- ¡Añade esta línea!
+streamlit
