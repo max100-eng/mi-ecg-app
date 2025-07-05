@@ -1,7 +1,9 @@
 import asyncio
 import nest_asyncio
 nest_asyncio.apply()
-from flask import Flask, request, jsonify, render_template
+import streamlit as st
+st.title('Mi App')
+st.write('Contenido de la aplicación')
 import wfdb
 import neurokit2 as nk
 import os
@@ -13,16 +15,9 @@ app = Flask(__name__)
 openai.api_key = "tu-api-key-de-openai"  # Reemplaza con tu clave
 
 # Ruta principal
-from flask import Flask
-app = Flask(__name__)  # Primero esto
-
-@app.route('/')       # Luego las rutas
-def home():
-    return "Hola Mundo"
-
-from flask import Flask  # Los imports deben estar AL PRINCIPIO del archivo
-
-# ... resto de tu código ...
+import streamlit as st
+st.title('Mi App')
+st.write('Contenido de la aplicación')
 
 if __name__ == '__main__':
     app.run()  # Esto debe estar al FINAL del archivo
