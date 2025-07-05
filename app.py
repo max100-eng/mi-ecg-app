@@ -1,3 +1,6 @@
+import asyncio
+import nest_asyncio
+nest_asyncio.apply()
 from flask import Flask, request, jsonify, render_template
 import wfdb
 import neurokit2 as nk
