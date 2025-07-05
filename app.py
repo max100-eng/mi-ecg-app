@@ -17,9 +17,12 @@ app = Flask(__name__)  # Primero esto
 def home():
     return "Hola Mundo"
 
+from flask import Flask  # Los imports deben estar AL PRINCIPIO del archivo
+
+# ... resto de tu código ...
+
 if __name__ == '__main__':
-    app.run()from flask import Flask
-app = Flask(__name__)  # Primero esto
+    app.run()  # Esto debe estar al FINAL del archivo
 
 @app.route('/')       # Luego las rutas
 def home():
