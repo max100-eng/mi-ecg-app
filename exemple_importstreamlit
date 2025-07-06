@@ -1,0 +1,17 @@
+import streamlit as st
+import asyncio
+
+async def fetch_data_async():
+    st.write("Fetching data asynchronously...")
+    await asyncio.sleep(2) # Simula una operación de red
+    st.write("Data fetched!")
+    return {"key": "value"}
+
+if st.button("Fetch Async Data"):
+    # Esto debería funcionar en Streamlit 1.25.0+
+    data = asyncio.run(fetch_data_async()) # ¡OJO! Esto podría generar el error si Streamlit ya está manejando el loop.
+                                          # Mejor: data = await fetch_data_async() si está en un contexto async de Streamlit
+    st.write(data)
+
+# Una forma más segura en Streamlit para funciones asíncronas (dependiendo de la versión)
+# Algunas integraciones con librerías asíncronas lo manejan automáticamente.
