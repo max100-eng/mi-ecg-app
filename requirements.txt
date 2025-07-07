@@ -1,10 +1,7 @@
-flask==3.0.3
-wfdb
-neurokit2
-numpy
-pandas
-scipy
-matplotlib
 streamlit
-PyWavelets
-openai
+python-dotenv
+neurokit2
+matplotlib
+pandas
+numpy
+openpyxl
