@@ -1,3 +1,4 @@
+
 import streamlit as st
 from dotenv import load_dotenv
 load_dotenv() # Carga las variables de entorno desde .env
@@ -281,4 +282,3 @@ if ecg_signal is not None and sampling_rate is not None:
 # Pie de página de la aplicación
 st.markdown("---")
 st.caption("Aplicación desarrollada para análisis ECG básico. No sustituye evaluación médica profesional.")
-
