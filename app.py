@@ -1,4 +1,3 @@
-
 import streamlit as st
 from dotenv import load_dotenv
 load_dotenv() # Carga las variables de entorno desde .env
@@ -209,23 +208,25 @@ if ecg_signal is not None and sampling_rate is not None:
     with tab1:
         # Visualización de la señal ECG procesada
         st.subheader("Señal ECG procesada")
-        fig, ax = plt.subplots(figsize=(12, 4)) # Crea una figura de Matplotlib
+        # Elimina la creación de la figura y los ejes aquí, ya que nk.ecg_plot lo hará internamente
+        # fig, ax = plt.subplots(figsize=(12, 4)) 
+
         # Plotea los primeros 3 segundos de la señal procesada
         # Asegura que signals no esté vacío y contenga la columna 'ECG_Clean'
         if not signals.empty and 'ECG_Clean' in signals.columns:
             # Añadir una verificación adicional para el tipo de datos y valores no finitos
             ecg_clean_data = signals['ECG_Clean'].values
             if pd.api.types.is_numeric_dtype(ecg_clean_data) and np.isfinite(ecg_clean_data).all():
-                # Eliminado el argumento 'sampling_rate' de nk.ecg_plot
-                nk.ecg_plot(signals[:3000], ax=ax) 
+                # Eliminado el argumento 'sampling_rate' y 'ax' de nk.ecg_plot
+                nk.ecg_plot(signals[:3000]) # NeuroKit2 creará su propia figura
                 plt.tight_layout() # Ajusta el layout para evitar solapamientos
-                st.pyplot(fig) # Muestra la figura en Streamlit
+                st.pyplot(plt.gcf()) # Muestra la figura actual de Matplotlib
             else:
                 st.warning("La columna 'ECG_Clean' no contiene datos numéricos válidos (posiblemente NaN o Inf) para la visualización.")
-                plt.close(fig) # Cierra la figura vacía para liberar memoria
+                plt.close('all') # Cierra todas las figuras para liberar memoria
         else:
             st.warning("No se pudo generar la visualización de la señal procesada. La señal podría ser inválida o faltar la columna 'ECG_Clean'.")
-            plt.close(fig) # Cierra la figura vacía para liberar memoria
+            plt.close('all') # Cierra todas las figuras para liberar memoria
         
         # Opción para mostrar la señal ECG cruda
         if st.checkbox("Mostrar señal ECG cruda"):
