@@ -210,14 +210,14 @@ if ecg_signal is not None and sampling_rate is not None:
         st.subheader("Señal ECG procesada")
         fig, ax = plt.subplots(figsize=(12, 4)) # Crea una figura de Matplotlib
         # Plotea los primeros 3 segundos de la señal procesada
-        # Asegura que signals no esté vacío antes de intentar plotear
-        if not signals.empty:
+        # Asegura que signals no esté vacío y contenga la columna 'ECG_Clean'
+        if not signals.empty and 'ECG_Clean' in signals.columns:
             nk.ecg_plot(signals[:3000], sampling_rate=sampling_rate, ax=ax) 
             plt.tight_layout() # Ajusta el layout para evitar solapamientos
             st.pyplot(fig) # Muestra la figura en Streamlit
         else:
-            st.warning("No se pudo generar la visualización de la señal procesada. La señal podría ser inválida.")
-            plt.close(fig) # Cierra la figura vacía
+            st.warning("No se pudo generar la visualización de la señal procesada. La señal podría ser inválida o faltar la columna 'ECG_Clean'.")
+            plt.close(fig) # Cierra la figura vacía para liberar memoria
         
         # Opción para mostrar la señal ECG cruda
         if st.checkbox("Mostrar señal ECG cruda"):
