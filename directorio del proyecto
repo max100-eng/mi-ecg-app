@@ -1,0 +1,9 @@
+dmi_proyecto_ecg/  <-- Esta es la raíz de tu proyecto
+├── app.py        <-- Aquí va el código de tu aplicación Streamlit
+├── requirements.txt <-- Aquí va la lista de librerías que necesita tu app
+├── .gitignore    <-- (Opcional, pero muy recomendado para ignorar archivos como .env)
+├── README.md     <-- (Opcional, para describir tu proyecto)
+└── otras_carpetas_o_archivos/
+    └── datos/
+    └── modelos/
+    └── etc/irectorio del proyectodirectorio del proyecto
