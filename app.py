@@ -208,19 +208,28 @@ if ecg_signal is not None and sampling_rate is not None:
     with tab1:
         # Visualización de la señal ECG procesada
         st.subheader("Señal ECG procesada")
-        # Elimina la creación de la figura y los ejes aquí, ya que nk.ecg_plot lo hará internamente
-        # fig, ax = plt.subplots(figsize=(12, 4)) 
-
+        
         # Plotea los primeros 3 segundos de la señal procesada
         # Asegura que signals no esté vacío y contenga la columna 'ECG_Clean'
         if not signals.empty and 'ECG_Clean' in signals.columns:
-            # Añadir una verificación adicional para el tipo de datos y valores no finitos
             ecg_clean_data = signals['ECG_Clean'].values
+            
+            # Definir un umbral mínimo de longitud de datos para la segmentación
+            # NeuroKit2 necesita suficientes picos R para segmentar. 
+            # Un valor de 1000-2000 muestras suele ser un mínimo razonable para señales típicas.
+            # Ajusta este umbral si tus señales son muy diferentes.
+            min_data_length_for_plot = 2 * sampling_rate # Por ejemplo, al menos 2 segundos de datos
+            
             if pd.api.types.is_numeric_dtype(ecg_clean_data) and np.isfinite(ecg_clean_data).all():
-                # Eliminado el argumento 'sampling_rate' y 'ax' de nk.ecg_plot
-                nk.ecg_plot(signals[:3000]) # NeuroKit2 creará su propia figura
-                plt.tight_layout() # Ajusta el layout para evitar solapamientos
-                st.pyplot(plt.gcf()) # Muestra la figura actual de Matplotlib
+                if len(ecg_clean_data) >= min_data_length_for_plot:
+                    # Usamos min(len(signals), 3000) para no intentar acceder a más datos de los que existen
+                    plot_data_length = min(len(signals), 3000) 
+                    nk.ecg_plot(signals[:plot_data_length]) # NeuroKit2 creará su propia figura
+                    plt.tight_layout() # Ajusta el layout para evitar solapamientos
+                    st.pyplot(plt.gcf()) # Muestra la figura actual de Matplotlib
+                else:
+                    st.warning(f"La señal es demasiado corta ({len(ecg_clean_data)} muestras) para generar una visualización detallada. Se requieren al menos {min_data_length_for_plot} muestras.")
+                    plt.close('all') # Cierra todas las figuras para liberar memoria
             else:
                 st.warning("La columna 'ECG_Clean' no contiene datos numéricos válidos (posiblemente NaN o Inf) para la visualización.")
                 plt.close('all') # Cierra todas las figuras para liberar memoria
@@ -231,7 +240,9 @@ if ecg_signal is not None and sampling_rate is not None:
         # Opción para mostrar la señal ECG cruda
         if st.checkbox("Mostrar señal ECG cruda"):
             fig_raw, ax_raw = plt.subplots(figsize=(12, 4))
-            ax_raw.plot(ecg_signal[:3000]) # Plotea los primeros 3 segundos de la señal cruda
+            # Usamos min(len(ecg_signal), 3000) para no exceder la longitud de la señal
+            plot_raw_data_length = min(len(ecg_signal), 3000)
+            ax_raw.plot(ecg_signal[:plot_raw_data_length]) 
             ax_raw.set_title("Señal ECG cruda")
             ax_raw.set_xlabel("Muestras")
             ax_raw.set_ylabel("Amplitud")
@@ -268,7 +279,7 @@ if ecg_signal is not None and sampling_rate is not None:
         if any(icon in ["⚠️", "❗"] for _, icon in diagnosis):
             st.warning("Se recomienda consultar con un cardiólogo para evaluación adicional.")
         else:
-            st.success("Los resultados parecen normales. Para una evaluación completa, consulte con su médico.")
+            st.success("Los resultados parecen normales. Para una una evaluación completa, consulte con su médico.")
 
     # Opciones de descarga en la barra lateral
     st.sidebar.header("📤 Exportar resultados")
