@@ -214,12 +214,13 @@ if ecg_signal is not None and sampling_rate is not None:
         # Asegura que signals no esté vacío y contenga la columna 'ECG_Clean'
         if not signals.empty and 'ECG_Clean' in signals.columns:
             # Añadir una verificación adicional para el tipo de datos y valores no finitos
-            if pd.api.types.is_numeric_dtype(signals['ECG_Clean']) and not signals['ECG_Clean'].isnull().all():
+            ecg_clean_data = signals['ECG_Clean'].values
+            if pd.api.types.is_numeric_dtype(ecg_clean_data) and np.isfinite(ecg_clean_data).all():
                 nk.ecg_plot(signals[:3000], sampling_rate=sampling_rate, ax=ax) 
                 plt.tight_layout() # Ajusta el layout para evitar solapamientos
                 st.pyplot(fig) # Muestra la figura en Streamlit
             else:
-                st.warning("La columna 'ECG_Clean' no contiene datos numéricos válidos para la visualización.")
+                st.warning("La columna 'ECG_Clean' no contiene datos numéricos válidos (posiblemente NaN o Inf) para la visualización.")
                 plt.close(fig) # Cierra la figura vacía para liberar memoria
         else:
             st.warning("No se pudo generar la visualización de la señal procesada. La señal podría ser inválida o faltar la columna 'ECG_Clean'.")
