@@ -216,7 +216,8 @@ if ecg_signal is not None and sampling_rate is not None:
             # Añadir una verificación adicional para el tipo de datos y valores no finitos
             ecg_clean_data = signals['ECG_Clean'].values
             if pd.api.types.is_numeric_dtype(ecg_clean_data) and np.isfinite(ecg_clean_data).all():
-                nk.ecg_plot(signals[:3000], sampling_rate=sampling_rate, ax=ax) 
+                # Eliminado el argumento 'sampling_rate' de nk.ecg_plot
+                nk.ecg_plot(signals[:3000], ax=ax) 
                 plt.tight_layout() # Ajusta el layout para evitar solapamientos
                 st.pyplot(fig) # Muestra la figura en Streamlit
             else:
