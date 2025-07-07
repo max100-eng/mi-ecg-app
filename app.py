@@ -40,7 +40,7 @@ with st.sidebar:
     st.header("⚙️ Parámetros") # Encabezado para la sección de parámetros
     # Slider para la duración de la señal simulada
     duration = st.slider("Duración (segundos)", 5, 30, 10, help="Duración de la señal simulada")
-    # Slider para la frecuencia cardíaca de la señal simulada
+    # Slider para la frecuencia cardíaca (lpm) de la señal simulada
     heart_rate = st.slider("Frecuencia cardíaca (lpm)", 40, 200, 75)
     # Slider para el nivel de ruido en la señal simulada
     noise = st.slider("Nivel de ruido", 0.0, 0.5, 0.05, 0.01, 
@@ -90,7 +90,7 @@ def interpret_ecg(metrics):
     hr = metrics.get("Frecuencia cardíaca", np.nan)
     
     if not np.isnan(hr):
-        # Heart rate analysis
+        # Análisis de la frecuencia cardíaca
         if hr > 100:
             diagnosis.append(("Taquicardia (>100 lpm)", "⚠️")) # Advertencia
         elif hr < 60:
@@ -212,9 +212,14 @@ if ecg_signal is not None and sampling_rate is not None:
         # Plotea los primeros 3 segundos de la señal procesada
         # Asegura que signals no esté vacío y contenga la columna 'ECG_Clean'
         if not signals.empty and 'ECG_Clean' in signals.columns:
-            nk.ecg_plot(signals[:3000], sampling_rate=sampling_rate, ax=ax) 
-            plt.tight_layout() # Ajusta el layout para evitar solapamientos
-            st.pyplot(fig) # Muestra la figura en Streamlit
+            # Añadir una verificación adicional para el tipo de datos y valores no finitos
+            if pd.api.types.is_numeric_dtype(signals['ECG_Clean']) and not signals['ECG_Clean'].isnull().all():
+                nk.ecg_plot(signals[:3000], sampling_rate=sampling_rate, ax=ax) 
+                plt.tight_layout() # Ajusta el layout para evitar solapamientos
+                st.pyplot(fig) # Muestra la figura en Streamlit
+            else:
+                st.warning("La columna 'ECG_Clean' no contiene datos numéricos válidos para la visualización.")
+                plt.close(fig) # Cierra la figura vacía para liberar memoria
         else:
             st.warning("No se pudo generar la visualización de la señal procesada. La señal podría ser inválida o faltar la columna 'ECG_Clean'.")
             plt.close(fig) # Cierra la figura vacía para liberar memoria
@@ -276,3 +281,4 @@ if ecg_signal is not None and sampling_rate is not None:
 # Pie de página de la aplicación
 st.markdown("---")
 st.caption("Aplicación desarrollada para análisis ECG básico. No sustituye evaluación médica profesional.")
+
