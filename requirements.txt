@@ -1,4 +1,7 @@
 streamlit
+numpy
+pandas
+pywt
 python-dotenv
 neurokit2
 matplotlib
