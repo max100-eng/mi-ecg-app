@@ -1,4 +1,4 @@
-streamlit
-numpy
-pandas
-pywt>=1.4.1
+streamlit==1.48.1
+numpy==2.3.2
+pandas==2.3.1
+pywt==1.6.0  # O cualquier otra versión probada para Python 3.11
