@@ -1,10 +1,4 @@
 streamlit
 numpy
 pandas
-pywt
-python-dotenv
-neurokit2
-matplotlib
-pandas
-numpy
-openpyxl
+pywt>=1.4.1
